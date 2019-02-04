@@ -20,7 +20,7 @@ async function quickstart() {
 
   const [result] = await client.textDetection('resources/hoodie.png')
   const soldOut = isSoldOut(result.fullTextAnnotation.text)
-  if (soldOut) {
+  if (!soldOut) {
     sendEmail()
     temp = 'available'
     return
