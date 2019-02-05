@@ -47,7 +47,7 @@ async function screenshotWebpage(url) {
 
 async function downloadCredentials() {
   const fileKey = 'page-scanner-21b36b626096.json'
-  if (!fs.existsSync(`${fileKey}`)) {
+  if (!fs.existsSync(`credentials/${fileKey}`)) {
 
     AWS.config.update({
       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -60,7 +60,7 @@ async function downloadCredentials() {
       Key: fileKey,
     }
 
-    const targetStream = fs.createWriteStream(`${fileKey}`)
+    const targetStream = fs.createWriteStream(`credentials/${fileKey}`)
     const credentialsStream = await s3.getObject(options).createReadStream()
     credentialsStream.pipe(targetStream)
   }
