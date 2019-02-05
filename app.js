@@ -42,20 +42,14 @@ async function screenshotWebpage(url) {
   const page = await browser.newPage()
   await page.goto(url)
   await page.screenshot({ path: 'resources/hoodie.png', fullPage: true })
-
-  try {
-    await scanPage()
-  } catch (err) {
-    console.log('err:', err)
-  }
   await browser.close()
 }
 
 async function downloadCredentials() {
   const fileKey = 'page-scanner-21b36b626096.json'
-  if (await !fs.existsSync(`${fileKey}`)) {
+  if (!fs.existsSync(`${fileKey}`)) {
 
-    await AWS.config.update({
+    AWS.config.update({
       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
       region: 'us-east-1',
@@ -66,7 +60,9 @@ async function downloadCredentials() {
       Key: fileKey,
     }
 
-    await s3.getObject(options).createReadStream().pipe(fs.createWriteStream(`${fileKey}`))
+    const targetStream = fs.createWriteStream(`${fileKey}`)
+    const credentialsStream = await s3.getObject(options).createReadStream()
+    credentialsStream.pipe(targetStream)
   }
 }
 
@@ -74,6 +70,7 @@ async function runJob() {
   const url = 'https://shop.dreamville.com/products/dreamville-hoodie-black?variant=8157889396826'
   await downloadCredentials()
   await screenshotWebpage(url)
+  await scanPage()
 }
 
 runJob()
