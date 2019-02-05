@@ -78,6 +78,6 @@ async function runJob() {
 
 runJob()
 
-app.listen(PORT, async () => {
+app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`)
 })
